@@ -16,14 +16,14 @@ func (s *Storage) Get(ctx context.Context, key string) (string, error) {
 	return value, nil
 }
 
-func (s *Storage) Set(ctx context.Context, key string, value string) error {
+func (s *Storage) Set(ctx context.Context, key string, value string) string {
 	s.Engine.Set(ctx, key, value)
 
-	return nil
+	return "was set"
 }
 
-func (s *Storage) Delete(ctx context.Context, key string) error {
+func (s *Storage) Delete(ctx context.Context, key string) string {
 	s.Engine.Delete(ctx, key)
 
-	return nil
+	return "was delete"
 }

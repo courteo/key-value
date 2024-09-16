@@ -8,7 +8,7 @@ type Computer struct {
 	logger *zap.Logger
 }
 
-func NewComputer(logger *zap.Logger) *Computer {
+func New(logger *zap.Logger) *Computer {
 	return &Computer{
 		logger: logger,
 	}

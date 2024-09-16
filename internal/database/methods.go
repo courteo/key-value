@@ -16,11 +16,11 @@ func (d *Database) HandleQuery(ctx context.Context, queryStr string) (string, er
 
 	switch query.Command {
 	case command.Set:
-		err = d.handleSetQuery(ctx, query)
+		value = d.handleSetQuery(ctx, query)
 	case command.Get:
 		value, err = d.handleGetQuery(ctx, query)
 	case command.Delete:
-		err = d.handleDeleteQuery(ctx, query)
+		value = d.handleDeleteQuery(ctx, query)
 	}
 
 	if err != nil {
@@ -30,22 +30,16 @@ func (d *Database) HandleQuery(ctx context.Context, queryStr string) (string, er
 	return value, nil
 }
 
-func (d *Database) handleSetQuery(ctx context.Context, query domain.Query) error {
-	err := d.Storage.Set(ctx, query.Key, query.Value)
-	if err != nil {
-		return err
-	}
+func (d *Database) handleSetQuery(ctx context.Context, query domain.Query) string {
+	response := d.Storage.Set(ctx, query.Key, query.Value)
 
-	return nil
+	return response
 }
 
-func (d *Database) handleDeleteQuery(ctx context.Context, query domain.Query) error {
-	err := d.Storage.Delete(ctx, query.Key)
-	if err != nil {
-		return err
-	}
+func (d *Database) handleDeleteQuery(ctx context.Context, query domain.Query) string {
+	response := d.Storage.Delete(ctx, query.Key)
 
-	return nil
+	return response
 }
 
 func (d *Database) handleGetQuery(ctx context.Context, query domain.Query) (string, error) {
