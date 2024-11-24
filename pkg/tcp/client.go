@@ -52,7 +52,7 @@ func (c *Client) Send(request []byte) ([]byte, error) {
 		return nil, err
 	}
 
-	if count == c.bufferSize {
+	if count >= c.bufferSize {
 		return nil, errors.New("small buffer size")
 	}
 

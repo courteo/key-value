@@ -2,24 +2,55 @@ package in_memory
 
 import (
 	"context"
+	"hash/fnv"
+
+	"github.com/courteo/key-value/pkg/common"
+	"go.uber.org/zap"
 )
 
 func (e *Engine) Get(ctx context.Context, key string) (string, bool) {
-	value, ok := e.hashTable.Get(key)
+	partitionIdx := 0
+	if len(e.partitions) > 1 {
+		partitionIdx = e.partitionIdx(key)
+	}
 
-	//e.logger.Debug("get key successfully", zap.Int64("request_id", ctx.Value("request_id").(int64)))
+	partition := e.partitions[partitionIdx]
+	value, found := partition.Get(key)
 
-	return value, ok
+	txID := common.GetTxIDFromContext(ctx)
+	e.logger.Debug("successfull get query", zap.Int64("tx", txID))
+	return value, found
 }
 
 func (e *Engine) Set(ctx context.Context, key string, value string) {
-	e.hashTable.Set(key, value)
+	partitionIdx := 0
+	if len(e.partitions) > 1 {
+		partitionIdx = e.partitionIdx(key)
+	}
 
-	//e.logger.Debug("set key successfully", zap.Int64("request_id", ctx.Value("request_id").(int64)))
+	partition := e.partitions[partitionIdx]
+	partition.Set(key, value)
+
+	txID := common.GetTxIDFromContext(ctx)
+	e.logger.Debug("successfull set query", zap.Int64("tx", txID))
 }
 
 func (e *Engine) Delete(ctx context.Context, key string) {
-	e.hashTable.Delete(key)
+	partitionIdx := 0
+	if len(e.partitions) > 1 {
+		partitionIdx = e.partitionIdx(key)
+	}
 
-	//e.logger.Debug("del key successfully", zap.Int64("request_id", ctx.Value("request_id").(int64)))
+	partition := e.partitions[partitionIdx]
+	partition.Delete(key)
+
+	txID := common.GetTxIDFromContext(ctx)
+	e.logger.Debug("successfull del query", zap.Int64("tx", txID))
+}
+
+func (e *Engine) partitionIdx(key string) int {
+	hash := fnv.New32a()
+	_, _ = hash.Write([]byte(key))
+
+	return int(hash.Sum32()) % len(e.partitions)
 }

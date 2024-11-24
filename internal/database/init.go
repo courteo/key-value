@@ -2,14 +2,15 @@ package database
 
 import (
 	"context"
+
 	"github.com/courteo/key-value/internal/domain"
 	"go.uber.org/zap"
 )
 
 type Storage interface {
 	Get(ctx context.Context, key string) (string, error)
-	Set(ctx context.Context, key string, value string) string
-	Delete(ctx context.Context, key string) string
+	Set(ctx context.Context, key string, value string) error
+	Delete(ctx context.Context, key string) error
 }
 
 type Computer interface {

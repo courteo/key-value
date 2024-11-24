@@ -2,7 +2,9 @@ package logger
 
 import (
 	"errors"
+
 	"github.com/courteo/key-value/internal/domain/config"
+
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )
@@ -20,7 +22,7 @@ const (
 	defaultOutputPath = "key-value.log"
 )
 
-func New(cfg *config.Logger) (*zap.Logger, error) {
+func New(cfg *config.Logging) (*zap.Logger, error) {
 	level := defaultLevel
 	output := defaultOutputPath
 

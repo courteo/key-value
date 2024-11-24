@@ -6,13 +6,23 @@ import (
 )
 
 type Engine struct {
-	hashTable *hash_table.HashTable
-	logger    *zap.Logger
+	partitions []*hash_table.HashTable
+	logger     *zap.Logger
 }
 
-func New(logger *zap.Logger) *Engine {
-	return &Engine{
-		hashTable: hash_table.New(),
-		logger:    logger,
+func New(logger *zap.Logger, options ...EngineOption) *Engine {
+	engine := &Engine{
+		logger: logger,
 	}
+
+	for _, option := range options {
+		option(engine)
+	}
+
+	if len(engine.partitions) == 0 {
+		engine.partitions = make([]*hash_table.HashTable, 1)
+		engine.partitions[0] = hash_table.New()
+	}
+
+	return engine
 }

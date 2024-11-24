@@ -3,13 +3,14 @@ package main
 import (
 	"bytes"
 	"context"
-	"github.com/courteo/key-value/internal/domain/config"
-	initializer2 "github.com/courteo/key-value/internal/initializer"
-	config2 "github.com/courteo/key-value/pkg/config"
 	"log"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/courteo/key-value/internal/domain/config"
+	initializer2 "github.com/courteo/key-value/internal/initializer"
+	config2 "github.com/courteo/key-value/pkg/config"
 )
 
 var (
@@ -21,17 +22,15 @@ func main() {
 	defer stop()
 
 	cfg := &config.Config{}
-	if ConfigFileName != "" {
-		data, err := os.ReadFile(ConfigFileName)
-		if err != nil {
-			log.Fatal(err)
-		}
+	data, err := os.ReadFile("../../config.yml")
+	if err != nil {
+		log.Fatal(err)
+	}
 
-		reader := bytes.NewReader(data)
-		cfg, err = config2.New(reader)
-		if err != nil {
-			log.Fatal(err)
-		}
+	reader := bytes.NewReader(data)
+	cfg, err = config2.New(reader)
+	if err != nil {
+		log.Fatal(err)
 	}
 
 	initializer, err := initializer2.New(cfg)

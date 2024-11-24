@@ -2,10 +2,11 @@ package compute
 
 import (
 	"errors"
-	"github.com/courteo/key-value/internal/domain"
-	"github.com/courteo/key-value/internal/domain/command"
 	"regexp"
 	"strings"
+
+	"github.com/courteo/key-value/internal/domain"
+	"github.com/courteo/key-value/internal/domain/command"
 )
 
 var (
@@ -38,11 +39,11 @@ func (c *Computer) ParseQuery(query string) (domain.Query, error) {
 func (c *Computer) getCommand(commandStr string) (int, error) {
 	switch commandStr {
 	case "SET":
-		return command.Set, nil
+		return command.SetID, nil
 	case "GET":
-		return command.Get, nil
+		return command.GetID, nil
 	case "DEL":
-		return command.Delete, nil
+		return command.DeleteID, nil
 	default:
 		return 0, errCommandNotFound
 	}
@@ -60,7 +61,7 @@ func (c *Computer) getArguments(query string, cmd int) (key string, val string, 
 		return "", "", errInvalidQuery
 	}
 
-	if cmd == command.Set {
+	if cmd == command.SetID {
 		secondIndex := strings.LastIndex(query, " ")
 		if secondIndex == -1 || firstIndex == secondIndex {
 			return "", "", errInvalidQuery
@@ -71,6 +72,9 @@ func (c *Computer) getArguments(query string, cmd int) (key string, val string, 
 	} else {
 		key = query[firstIndex+1:]
 	}
+
+	key= strings.ReplaceAll(key, "\n", "")
+	val=  strings.ReplaceAll(val, "\n", "")
 
 	return key, val, nil
 }

@@ -3,9 +3,10 @@ package config
 import (
 	"errors"
 	"fmt"
+	"io"
+
 	"github.com/courteo/key-value/internal/domain/config"
 	"gopkg.in/yaml.v3"
-	"io"
 )
 
 func New(reader io.Reader) (*config.Config, error) {
